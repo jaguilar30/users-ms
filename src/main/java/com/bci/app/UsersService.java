@@ -61,16 +61,28 @@ public class UsersService implements UsersFacade {
     }
 
     private void validateData(User userToCreate) throws UserException {
+        if(Objects.isNull(userToCreate.getName()) || userToCreate.getName().isBlank()){
+            log.error(String.format(MSG_ERROR_PROCESS_SERVICE, "name is empty",  "name: ", userToCreate.getName(),
+                    ERROR_NAME_EMPTY));
+            throw new UserException("422-3", ERROR_NAME_EMPTY);
+        }
+
+        if(Objects.isNull(userToCreate.getEmail()) || userToCreate.getEmail().isEmpty()){
+            log.error(String.format(MSG_ERROR_PROCESS_SERVICE, "email is empty",  "email: ", userToCreate.getEmail(),
+                    ERROR_EMAIL_EMPTY));
+            throw new UserException("422-4", ERROR_EMAIL_EMPTY);
+        }
+
         if(!userToCreate.getEmail().matches(regexEmail)){
             log.error(String.format(MSG_ERROR_PROCESS_SERVICE, "email format",  "email: ", userToCreate.getEmail(),
                     "Email format not allowed."));
-            throw new UserException("422-3", ERROR_FORMAT_EMAIL);
+            throw new UserException("422-5", ERROR_FORMAT_EMAIL);
         }
 
         if(!userToCreate.getPassword().matches(regexPassword)){
             log.error(String.format(MSG_ERROR_PROCESS_SERVICE, "password format",  "password: ", userToCreate.getPassword(),
                     "Password format not allowed."));
-            throw new UserException("422-4", ERROR_FORMAT_PASSWORD);
+            throw new UserException("422-6", ERROR_FORMAT_PASSWORD);
         }
     }
 }

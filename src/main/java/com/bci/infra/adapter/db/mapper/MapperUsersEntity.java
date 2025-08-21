@@ -17,7 +17,7 @@ public interface MapperUsersEntity {
 
         List<Phones> phones = new ArrayList<>();
 
-        if(!user.getPhones().isEmpty()){
+        if(!Objects.isNull(user.getPhones()) && !user.getPhones().isEmpty()){
             phones = user.getPhones().stream().map(p -> Phones.builder()
                     .number(p.getNumber())
                     .id(p.getId())

@@ -20,6 +20,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 
@@ -40,7 +41,8 @@ public class UsersControllerTest {
         ResponseEntity<UserDto> response = usersController.createUser(getCreateAndUpdateUserDto());
 
         Assertions.assertNotNull(response);
-        Assertions.assertEquals(Objects.requireNonNull(response.getBody()).getData().get(0).getFirstName(), getUserDto().getData().get(0).getFirstName());
+        Assertions.assertEquals(Objects.requireNonNull(response.getBody()).getData().getName(),
+                getUserDto().getData().getName());
     }
 
     @Test
@@ -50,51 +52,26 @@ public class UsersControllerTest {
         Assertions.assertThrows(UserException.class, () -> usersController.createUser(getCreateAndUpdateUserDto()));
     }
 
-    @Test
-    public void getUserByIdTestWhenSuccess() throws UserException {
-        Mockito.when(usersService.getUserById(any())).thenReturn(getUserDto());
-
-        ResponseEntity<UserDto> response = usersController.getUserById(1L);
-
-        Assertions.assertNotNull(response);
-        Assertions.assertEquals(Objects.requireNonNull(response.getBody()).getData().get(0).getFirstName(), getUserDto().getData().get(0).getFirstName());
-    }
-
-    @Test
-    public void getUsersTestWhenSuccess() throws UserException {
-        Mockito.when(usersService.getUsers()).thenReturn(getUserDto());
-
-        ResponseEntity<UserDto> response = usersController.getUsers();
-
-        Assertions.assertNotNull(response);
-        Assertions.assertEquals(Objects.requireNonNull(response.getBody()).getData().get(0).getFirstName(), getUserDto().getData().get(0).getFirstName());
-    }
-
-    @Test
-    public void updateUserTestWhenSuccess() throws UserException {
-        Mockito.when(usersService.updateUser(any())).thenReturn(getUserDto());
-
-        ResponseEntity<UserDto> response = usersController.updateUser(1L, getCreateAndUpdateUserDto());
-
-        Assertions.assertNotNull(response);
-        Assertions.assertEquals(Objects.requireNonNull(response.getBody()).getData().get(0).getFirstName(), getUserDto().getData().get(0).getFirstName());
-    }
-
     private UserDto getUserDto() {
         return UserDto.builder()
-                .data(Collections.singletonList(UserDataDto.builder()
-                        .lastName("lastName")
-                        .firstName("firstName")
+                .data(UserDataDto.builder()
+                        .name("Name")
+                        .id(UUID.randomUUID())
                         .updateAt(Timestamp.valueOf(LocalDateTime.now()))
                         .createAt(Timestamp.valueOf(LocalDateTime.now()))
-                        .userId(1L).build()))
+                        .email("juan@mail.cl")
+                        .active(Boolean.TRUE)
+                        .lastLogin(Timestamp.valueOf(LocalDateTime.now()))
+                        .password("Syc@juluaga2016")
+                        .token("token").build())
                 .build();
     }
 
     CreateUserDto getCreateAndUpdateUserDto(){
         return CreateUserDto.builder()
-                .lastName("lastName")
-                .firstName("firstName")
+                .email("juan@mail.cl")
+                .password("Syc@juluaga2016")
+                .name("name")
                 .build();
     }
 }

@@ -2,6 +2,7 @@ package com.bci.infra.adapter.db;
 
 import com.bci.UsersApplication;
 import com.bci.domain.entities.User;
+import com.bci.infra.adapter.db.entites.PhonesDto;
 import com.bci.infra.adapter.db.entites.UsersDto;
 import com.bci.infra.adapter.db.jpa.UsersJpaRepository;
 import com.bci.infra.api.router.controller.error.exception.UserException;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 
@@ -38,57 +40,34 @@ public class UsersRepositoryTest {
         User response = usersRepository.save(getUsersDto());
 
         Assertions.assertNotNull(response);
-        Assertions.assertEquals(response.getFirstName(), getUsersDto().getFirstName());
+        Assertions.assertEquals(response.getName(), getUsersDto().getName());
     }
 
     @Test
-    public void getUserByIdTestWhenSuccess() throws UserException {
-        Mockito.when(usersJpaRepository.findById(any())).thenReturn(Optional.ofNullable(getUsersDto()));
+    public void getUserByEmailTestWhenSuccess() throws UserException {
+        Mockito.when(usersJpaRepository.findByEmail(any())).thenReturn(getUsersDto());
 
-        User response = usersRepository.getUserById(1L);
-
-        Assertions.assertNotNull(response);
-        Assertions.assertEquals(response.getFirstName(), getUsersDto().getFirstName());
-    }
-
-    @Test
-    public void getUsersTestWhenSuccess() throws UserException {
-        Iterable<UsersDto> iterable = Collections.singletonList(getUsersDto());
-
-        Mockito.when(usersJpaRepository.findAll()).thenReturn(iterable);
-
-        List<User> response = usersRepository.getUsers();
+        User response = usersRepository.getUserByEmail(getUsersDto().getEmail());
 
         Assertions.assertNotNull(response);
-        Assertions.assertEquals(response.get(0).getFirstName(), getUsersDto().getFirstName());
-    }
-
-    @Test
-    public void updateUserTestWhenSuccess() throws UserException {
-        Mockito.when(usersJpaRepository.save(any())).thenReturn(getUsersDto());
-
-        User response = usersRepository.updateUser(getUsersDto());
-
-        Assertions.assertNotNull(response);
-        Assertions.assertEquals(response.getFirstName(), getUsersDto().getFirstName());
-    }
-
-    @Test
-    public void getUserByNameTestWhenSuccess() throws UserException {
-        Mockito.when(usersJpaRepository.findByFirstNameAndLastName(any(), any())).thenReturn(getUsersDto());
-
-        User response = usersRepository.getUserByName(getUsersDto().getFirstName(), getUsersDto().getLastName());
-
-        Assertions.assertNotNull(response);
-        Assertions.assertEquals(response.getFirstName(), getUsersDto().getFirstName());
+        Assertions.assertEquals(response.getName(), getUsersDto().getName());
     }
 
     private UsersDto getUsersDto() {
         return UsersDto.builder()
-                .lastName("lastName")
-                .firstName("firstName")
+                .name("name")
+                .id(UUID.randomUUID())
                 .updateAt(java.sql.Timestamp.valueOf(LocalDateTime.now()))
                 .createAt(java.sql.Timestamp.valueOf(LocalDateTime.now()))
-                .userId(1L).build();
+                .email("juan@mail.cl")
+                .active(Boolean.TRUE)
+                .lastLogin(java.sql.Timestamp.valueOf(LocalDateTime.now()))
+                .token("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c3VhcmlvMTIzIiwiaWF0IjoxNzU1Nzg4MTE2LCJleHAiOjE3NTU3OTUzMTZ9.OWjChsRnYSjGqcCwiEIseb--qbzZMWUJcFP6zyMaHNA")
+                .phones(Collections.singletonList(PhonesDto.builder()
+                        .countryCode("code")
+                        .id(UUID.randomUUID())
+                        .number("3192982")
+                        .cityCode("code")
+                        .user(UsersDto.builder().id(UUID.randomUUID()).build()).build())).build();
     }
 }

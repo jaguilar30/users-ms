@@ -26,6 +26,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -54,23 +55,18 @@ public class UsersControllerIntegrationsTest {
     @BeforeEach
     public void setup() throws Exception {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
-        this.body = "{ \n" +
-                "    \"first_name\": \"Jose\",\n" +
-                "    \"last_name\" : \"Lema\" \t\n" +
+        this.body = "{\n" +
+                "    \"name\": \"Juan Rodriguez\",\n" +
+                "    \"email\": \"juan@gmail.cl\",\n" +
+                "    \"password\": \"Syc@juluaga2016\",\n" +
+                "    \"phones\": [\n" +
+                "        {\n" +
+                "            \"number\": \"1234567\",\n" +
+                "            \"city_code\": \"1\",\n" +
+                "            \"country_code\": \"57\"\n" +
+                "        }\n" +
+                "    ]\n" +
                 "}";
-    }
-
-    @Test
-    public void getUserByIdThenVerifyResponse() throws Exception {
-
-        Mockito.when(usersService.getUserById(any())).thenReturn(getUserDto());
-
-
-         this.mockMvc.perform(get("/user/{id}", "1"))
-                .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("200"))
-                .andReturn();
-
     }
 
     @Test
@@ -79,53 +75,26 @@ public class UsersControllerIntegrationsTest {
         Mockito.when(usersService.createUser(any())).thenReturn(getUserDto());
 
 
-        this.mockMvc.perform(post("/user" ).content(body).contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(post("/users" ).content(body).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().is(201)).andExpect(content()
                         .contentType("application/json"))
-                .andExpect(jsonPath("$.code").value("200"))
-                .andReturn();
-
-    }
-
-    @Test
-    public void getUsersThenVerifyResponse() throws Exception {
-
-        Mockito.when(usersService.getUsers()).thenReturn(getUserDto());
-
-
-        this.mockMvc.perform(get("/user" ))
-                .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("200"))
-                .andReturn();
-
-    }
-
-    @Test
-    public void updateUserThenVerifyResponse() throws Exception {
-
-        Mockito.when(usersService.updateUser(any())).thenReturn(getUserDto());
-
-
-        this.mockMvc.perform(put("/user/{id}", "1" ).content(body).contentType(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("200"))
                 .andReturn();
 
     }
 
     private UserDto getUserDto() {
-        UserDto result = UserDto.builder()
-                .data(Collections.singletonList(UserDataDto.builder()
-                        .lastName("lastName")
-                        .firstName("firstName")
+        return UserDto.builder()
+                .data(UserDataDto.builder()
+                        .name("Name")
+                        .id(UUID.randomUUID())
                         .updateAt(Timestamp.valueOf(LocalDateTime.now()))
                         .createAt(Timestamp.valueOf(LocalDateTime.now()))
-                        .userId(1L).build()))
+                        .email("juan@mail.cl")
+                        .active(Boolean.TRUE)
+                        .lastLogin(Timestamp.valueOf(LocalDateTime.now()))
+                        .password("Syc@juluaga2016")
+                        .token("token").build())
                 .build();
-        result.setCode("200");
-        result.setMessage("user created");
-
-        return result;
     }
 }

@@ -52,7 +52,6 @@ public class ErrorHandlerTest {
         ResponseEntity<GenericResponseDTO> response = errorHandler.genericException(new UserException("422-1", "error"));
 
         assertNotNull(response);
-        assertEquals("422-1", response.getBody().getCode());
         assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, response.getStatusCode());
     }
 

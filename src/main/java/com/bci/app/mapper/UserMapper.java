@@ -22,7 +22,7 @@ public interface UserMapper {
     static UserDataDto toDto(User user){
         List<PhonesDto> phonesDto = new ArrayList<>();
 
-        if(!user.getPhones().isEmpty()){
+        if(!Objects.isNull(user.getPhones()) && !user.getPhones().isEmpty()){
             phonesDto = user.getPhones().stream().map(p -> PhonesDto.builder()
                     .countryCode(p.getCountryCode())
                     .number(p.getNumber())
@@ -50,14 +50,10 @@ public interface UserMapper {
     }
 
     static UsersDto toUsersEntityDto(User user, Integer expired) {
-        if (Objects.isNull(user) ){
-            return UsersDto.builder().build();
-        }
-
         UUID userId = UUID.randomUUID();
         List<com.bci.infra.adapter.db.entites.PhonesDto> phonesDto = new ArrayList<>();
 
-        if(!user.getPhones().isEmpty()){
+        if(!Objects.isNull(user.getPhones()) && !user.getPhones().isEmpty()){
             phonesDto = user.getPhones().stream().map(p -> com.bci.infra.adapter.db.entites.PhonesDto.builder()
                     .id(UUID.randomUUID())
                     .countryCode(p.getCountryCode())

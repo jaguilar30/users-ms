@@ -18,7 +18,7 @@ public interface UserDtoMapper {
         }
 
         List<Phones> phones = new ArrayList<>();
-        if (!createUserDto.getPhones().isEmpty()) {
+        if (!Objects.isNull(createUserDto.getPhones()) && !createUserDto.getPhones().isEmpty()) {
             phones = createUserDto.getPhones().stream().map(p -> Phones.builder()
                     .countryCode(p.getCountryCode())
                     .number(p.getNumber())
